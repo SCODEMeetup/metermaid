@@ -14,7 +14,7 @@ data = pd.read_csv(csv_file,
 
             )
 
-key = 'AIzaSyDjN80ThEj0GIp49sNk1k3iLTDalMponxg'
+key = 'find_your_api_key'
 
 # Center on the grid
 map_options = GMapOptions(lat=data.get('X').mean(),
@@ -25,8 +25,10 @@ map_options = GMapOptions(lat=data.get('X').mean(),
 p = gmap(google_api_key=key, map_options=map_options, title="Columbus?")
 
 source = ColumnDataSource(
-    dict(lat = data.get("X"),
-    lon = data.get("Y"))
+    dict(
+        lat = data.get("X"),
+        lon = data.get("Y")
+    )
 )
 
 # Put circles on the map with all of the meter locations
