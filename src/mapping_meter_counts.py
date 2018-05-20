@@ -4,7 +4,7 @@ from pandas.io.json import json_normalize
 from json import loads
 
 from bokeh.io import output_file, show
-from bokeh.models import ColumnDataSource, GMapOptions
+from bokeh.models import ColumnDataSource, GMapOptions, HoverTool
 from bokeh.plotting import gmap
 
 # Need to disable some warnings ;)
@@ -27,7 +27,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 ###
 
 # for console / programmatic setting
-# environ.__setitem__('gmaps_api_key', 'abc123')
+# environ.__setitem__('gmaps_api_key', 'xxxx')
 if 'gmaps_api_key' in environ.keys():
     key = environ['gmaps_api_key']
 else:
@@ -44,7 +44,7 @@ meter_transactions_file = 'parking_meters_data_2015_2017.csv'
 #        'FOOD_SERVICE_HOURS', 'TAXI_ZONE_HOURS', 'CHARGING_STATION',
 #        'CHARGING_STATION_STATUS'],
 #       dtype='object')
-parking_meters = pd.read_csv(parking_meters_csv_file,
+parking_meters  :pd.DataFrame = pd.read_csv(parking_meters_csv_file,
             delimiter=',',
             parse_dates=True,
             infer_datetime_format=True,
@@ -53,23 +53,15 @@ parking_meters = pd.read_csv(parking_meters_csv_file,
 # Index(['Pole', 'ParkingStartDate', 'ParkingEndDate', 'TransactionType',
 #        'TotalCredit'],
 #       dtype='object')
-meter_transactions = pd.read_csv(meter_transactions_file,
+meter_transactions :pd.DataFrame = pd.read_csv(meter_transactions_file,
             delimiter=',',
             parse_dates=True,
             infer_datetime_format=True,
             )
-meter_transactions.sample()
 
 # samples
 # meter_transactions.where(meter_transactions["Pole"] == "SO410").where(meter_transactions["TotalCredit" > 0]).sample(n=1)
 # meter_transactions.loc[(meter_transactions['Pole'] == "SO410") & meter_transactions['TotalCredit'] != None]
-
-# in-progress
-meter_transactions_columns :list = [ 'Pole', 'ParkingStartDate', 'ParkingEndDate' ]
-meter_columns :list = [ 'X', 'Y', 'METER_ID', 'LOCATION' ]
-joined_df = meter_transactions.join(parking_meters, on=['METER_ID','Pole'], how='left')
-
-
 
 # 1. Mapping meter count = Parking Meters + Parking transaction data (2015-2017)
 #    1. Parking Meters -
@@ -78,29 +70,50 @@ joined_df = meter_transactions.join(parking_meters, on=['METER_ID','Pole'], how=
 #        1. Longitude and latitude
 #        2. count (meter ids)
 #        3. meter_id <inner join> pole
+# Create a merged dataset joined by the meter_id and pole columns
+merged_df : pd.DataFrame = pd.DataFrame.merge(parking_meters, meter_transactions, how='left', left_on='METER_ID', right_on='Pole')
+counts_per_pole :pd.DataFrame = merged_df.where(merged_df['TotalCredit'] != None).groupby('Pole').count()
 
 # The AvgLat and AvgLong are to try to center the chart
 # Adjust the zoom value to zoom in/out based on need.
 # The value here is only an initial zoom level
-meter_map_options = GMapOptions(lat=parking_meters.get('Y').mean(),
-                                lng=parking_meters.get('X').mean(),
+meter_map_options = GMapOptions(lat=merged_df.Y.mean(),
+                                lng=merged_df.X.mean(),
                                 map_type="roadmap",
                                 zoom=15)
-meter_map = gmap(google_api_key=key, map_options=meter_map_options, title="Columbus")
 
 # This we will want to adjust based on the needs of the spec
 meter_source = ColumnDataSource(
     dict(
-        lat = parking_meters.get("Y"),
-        lon = parking_meters.get("X")
+        lat = merged_df.Y,
+        lon = merged_df.X,
+        size = counts_per_pole.TotalCredit,
+        meter_info=parking_meters.get("METER_ID"),
+        location=parking_meters.get("LOCATION"),
+        side_of_street=parking_meters.get("SIDE_OF_STREET"),
+        blockface=parking_meters.get("BLOCKFACE"),
+        meter_status=parking_meters.get("METER_STATUS"),
+        rate=parking_meters.get("RATE"),
     )
 )
+
+hover = HoverTool(tooltips=[
+    # ("x, y", "@lat, @lon"),
+    ("Meter Number", "@meter_info"),
+    ("Location", "@location"),
+    ("Side of street", "@side_of_street"),
+    ("Blockface", "@blockface"),
+    ("Meter Status", "@meter_status"),
+    ("Rate", "@rate"),
+])
+
+meter_map = gmap(google_api_key=key, map_options=meter_map_options, title="Columbus", tools=[hover])
 
 # Put circles on the map with all of the meter locations. The size of the dot is based on number of transactions
 # todo, the original map from Nathan had size/color gradients based on
 meter_map.circle(x="lon",
                  y="lat",
-                 size=5,
+                 size="size",
                  fill_color="blue",
                  fill_alpha=0.8,
                  source=meter_source)
