@@ -1,0 +1,82 @@
+h1 {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight:900;
+  letter-spacing: .2em;
+  font-family: 'Montserrat', sans-serif;
+}
+
+iframe {
+  display: block;
+  margin: 0 auto;
+  border: 0;
+}
+
+p {
+  color: black;
+}
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: black;
+    color: white;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif;
+}
+
+nav ul {
+	list-style-type: none;
+  padding: 1em;
+  margin: 0;
+  width: 8em;
+  float: left;
+	border-right: 1px dotted grey;
+	height: 20em;
+	margin-top: 2em;
+}
+
+
+nav ul li {
+  margin: 0.5em 0;
+  padding: 0.3em;
+  background: black;
+  color: white;
+  text-align:right;
+}
+
+nav li a { text-decoration: none; }
+nav li a:link {color:white;}      /* unvisited link */
+nav li a:visited {color:white;}  /* visited link */
+nav li a:hover {color:#FF0000;}  /* mouse over link */
+nav li a:active {color:#0000FF;}  /* selected link */
+
+nav li.current {
+	width: 16em;
+	text-align:left;
+}
+
+nav li.current a {
+	margin-left: 9em;
+	font-weight: bold;
+}
+
+div.content {
+	float: left;
+	margin: 0;
+	padding: 0;
+	margin-left: 9em;
+	margin-top: 1.8em;
+  max-width: 70%;
+}
+
+div.content div {
+  padding: 20px;
+}
+
+#page3 {
+  background-color: #e0ebeb;
+}
