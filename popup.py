@@ -24,7 +24,7 @@ searching_for_parking = pd.read_csv(searching_for_parking_csv_file,
             infer_datetime_format=True,
             )
 
-key = 'AIzaSyDjN80ThEj0GIp49sNk1k3iLTDalMponxg'
+key = 'API KEY'
 
 # Center on the grid
 meter_map_options = GMapOptions(lat=parking_meters.get('Y').mean(),
