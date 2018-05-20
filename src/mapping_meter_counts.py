@@ -95,7 +95,7 @@ hover = HoverTool(tooltips=[
     ("Total Spent", "@total"),
 ])
 
-meter_map = gmap(google_api_key=key, map_options=meter_map_options, title="Columbus", tools=[hover])
+meter_map = gmap(google_api_key=key, map_options=meter_map_options, title="Columbus", tools=[hover, 'pan', 'wheel_zoom', 'zoom_in', 'zoom_out'])
 
 # Put circles on the map with all of the meter locations. The size of the dot is based on number of transactions
 # todo, the original map from Nathan had size/color gradients based on
