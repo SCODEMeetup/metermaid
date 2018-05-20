@@ -1,8 +1,5 @@
 from os import environ
 import pandas as pd
-from pandas.io.json import json_normalize
-from json import loads
-
 from bokeh.io import output_file, show
 from bokeh.models import ColumnDataSource, GMapOptions, HoverTool
 from bokeh.plotting import gmap
@@ -59,17 +56,6 @@ meter_transactions :pd.DataFrame = pd.read_csv(meter_transactions_file,
             infer_datetime_format=True,
             )
 
-# samples
-# meter_transactions.where(meter_transactions["Pole"] == "SO410").where(meter_transactions["TotalCredit" > 0]).sample(n=1)
-# meter_transactions.loc[(meter_transactions['Pole'] == "SO410") & meter_transactions['TotalCredit'] != None]
-
-# 1. Mapping meter count = Parking Meters + Parking transaction data (2015-2017)
-#    1. Parking Meters -
-#        1. Longitude x/ Latitude y/
-#    2. Parking transaction data (2015-2017) -
-#        1. Longitude and latitude
-#        2. count (meter ids)
-#        3. meter_id <inner join> pole
 # Create a merged dataset joined by the meter_id and pole columns
 merged_df : pd.DataFrame = pd.DataFrame.merge(parking_meters, meter_transactions, how='left', left_on='METER_ID', right_on='Pole')
 counts_per_pole :pd.DataFrame = merged_df.where(merged_df['TotalCredit'] != None).groupby('Pole').count()
@@ -88,12 +74,13 @@ meter_source = ColumnDataSource(
         lat = merged_df.Y,
         lon = merged_df.X,
         size = counts_per_pole.TotalCredit,
-        meter_info=parking_meters.get("METER_ID"),
-        location=parking_meters.get("LOCATION"),
-        side_of_street=parking_meters.get("SIDE_OF_STREET"),
-        blockface=parking_meters.get("BLOCKFACE"),
-        meter_status=parking_meters.get("METER_STATUS"),
-        rate=parking_meters.get("RATE"),
+        meter_info=merged_df.METER_ID,
+        location=merged_df.LOCATION,
+        side_of_street=merged_df.SIDE_OF_STREET,
+        blockface=merged_df.BLOCKFACE,
+        meter_status=merged_df.METER_STATUS,
+        rate=merged_df.RATE,
+        total = counts_per_pole.TotalCredit
     )
 )
 
@@ -105,6 +92,7 @@ hover = HoverTool(tooltips=[
     ("Blockface", "@blockface"),
     ("Meter Status", "@meter_status"),
     ("Rate", "@rate"),
+    ("Total Spent", "@total"),
 ])
 
 meter_map = gmap(google_api_key=key, map_options=meter_map_options, title="Columbus", tools=[hover])
