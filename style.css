@@ -1,0 +1,25 @@
+h1 {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight:900;
+  letter-spacing: .2em;
+  font-family: 'Montserrat', sans-serif;
+}
+
+iframe {
+  display: block;
+  margin: 0 auto;
+  border: 0;
+}
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: black;
+    color: white;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif;
+}
