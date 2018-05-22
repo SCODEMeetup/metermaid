@@ -15,7 +15,7 @@ Find parking hotspots in columbus.
 ## Team ##
 
 ## Presentation ##
-
+https://github.com/allparks/metermaid/blob/master/presentation/HotSpots-Deck.pdf
 
 ## Screen Shots ##
 
