@@ -3,17 +3,24 @@ Hotspots by Metermaid
 
 Find parking hotspots in columbus.
 
-### Use Cases
-https://www.smartcolumbusos.com/data-stories
+### Use Case
+https://www.smartcolumbusos.com/data-stories/parking-tickets-piling-up-use-data-to-determine-why
 
 ### Tech Stack
   1. Python
   2. Bokeh - Interactive visualization library https://bokeh.pydata.org/en/latest/
   3. Litespeed (web-server) - https://www.litespeedtech.com/products/litespeed-web-server
-  4. Pandas - Data analysis library  https://pandas.pydata.org/ 
+  4. Pandas - Data analysis library  https://pandas.pydata.org/
+  5. PyCharm SE - IDE
+  6. Google maps platform - key registration 
 
 ### Installation 
-
+  Running the application
+  1. Clone repo to your local https://github.com/allparks/metermaid.git
+  2. Install lite-server 
+    1. `sudo npm install -g lite-server`
+  3. In terminal navigate to '/metermaid/parkingApp' dir
+  4. type `lite-server` to start the server and load the app.    
 
 
 ### Data Used
